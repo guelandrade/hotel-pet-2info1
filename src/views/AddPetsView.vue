@@ -2,14 +2,11 @@
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 
-onMounted();
-
 const novoPet = ref({
   nome: '',
   especie: '',
   tutorId: '',
 });
-
 const API_URL = 'http://localhost:3000/pets';
 const tutores = ref([]);
 const router = useRouter();
@@ -21,7 +18,7 @@ async function carregarTutores() {
 }
 
 async function salvarPet() {
-  const resposta = await fetch(`${API_URL}/pets`, {
+  await fetch(`${API_URL}/pets`, {
     method: 'POST',
     headers: {
       'Content-type': 'application/json',
@@ -29,7 +26,9 @@ async function salvarPet() {
     body: JSON.stringify(novoPet.value),
   });
   router.push('/pets');
-}
+}   
+
+onMounted(carregarTutores);
 </script>
 
 <template>
@@ -45,6 +44,17 @@ async function salvarPet() {
     >
       Adicionar Pet
     </RouterLink>
+
+    <p v-if="carregandoTutores">Carregando tutores...</p>
+    <div v-else>
+      <p
+        v-if="erro"
+        class="alert alert-danger"
+        role="alert"
+      >
+        {{ erro }}
+      </p>
+    </div>
 
     <form @submit.prevent="salvarPet">
       <div class="col-md-6">
