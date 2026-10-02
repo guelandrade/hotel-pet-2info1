@@ -26,7 +26,7 @@ async function salvarPet() {
     body: JSON.stringify(novoPet.value),
   });
   router.push('/pets');
-}   
+}
 
 onMounted(carregarTutores);
 </script>

@@ -73,6 +73,11 @@ onMounted(carregarDados);
           <td>{{ pet.nome }}</td>
           <td>{{ pet.especie }}</td>
           <td>{{ nomeDoTutor(pet.tutorId) }}</td>
+          <td>
+            <RouterLink :to="{ name: 'detalhes-pet', params: { id: pet.id } }">
+              Visualizar
+            </RouterLink>
+          </td>
         </tr>
       </tbody>
     </table>
