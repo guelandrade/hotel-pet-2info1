@@ -14,26 +14,32 @@
       "id": "3",
       "nome": "Ana",
       "telefone": "479999100100"
+    },
+    {
+      "nome": "miguel",
+      "telefone": "47999046983",
+      "id": "4CCdSH2VkVI"
     }
   ],
   "pets": [
     {
-      "id": "1",
-      "nome": "Safira",
-      "especie": "Cachorro",
-      "tutorId": "1"
-    },
-    {
-      "id": "2",
-      "nome": "Melado",
-      "especie": "Cachorro",
-      "tutorId": "2"
-    },
-    {
-      "id": "3",
-      "nome": "Pandora",
+      "nome": "miguel",
       "especie": "Gato",
-      "tutorId": "3"
+      "tutorId": "1",
+      "id": "yOhR3f4SFno"
+    },
+    {
+      "nome": "rafael",
+      "especie": "Cachorro",
+      "tutorId": "3",
+      "id": "0TCMEXOs6CE"
+    },
+    {
+      "nome": "matheus",
+      "especie": "Cachorro",
+      "tutorId": "2",
+      "id": "AdAar5N9C-k"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

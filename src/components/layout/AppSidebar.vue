@@ -1,5 +1,7 @@
 <script setup>
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
+
+const route = useRoute();
 </script>
 
 <template>
@@ -7,7 +9,7 @@ import { RouterLink } from 'vue-router';
     <div class="nav flex-column nav-pills gap-1">
       <RouterLink
         class="nav-link"
-        active-class="active"
+        :class="{ active: route.name === 'pets' || route.name === 'detalhes-pet' }"
         to="/pets"
       >
         <i
@@ -19,7 +21,7 @@ import { RouterLink } from 'vue-router';
 
       <RouterLink
         class="nav-link"
-        active-class="active"
+        :class="{ active: route.name === 'addPet' }"
         to="/pets/novo"
       >
         <i
@@ -29,16 +31,28 @@ import { RouterLink } from 'vue-router';
         Novo pet
       </RouterLink>
 
-      <span
-        class="nav-link text-body-secondary"
-        aria-disabled="true"
+      <RouterLink
+        class="nav-link"
+        :class="{ active: route.name === 'tutores' || route.name === 'detalhes-tutor' }"
+        to="/tutores"
       >
         <i
           class="bi bi-people me-2"
           aria-hidden="true"
         ></i>
-        Tutores <small class="ms-1">(em breve)</small>
-      </span>
+        Tutores
+      </RouterLink>
+      <RouterLink
+        class="nav-link"
+        :class="{ active: route.name === 'addTutor' }"
+        to="/tutores/novo"
+      >
+        <i
+          class="bi bi-plus-circle me-2"
+          aria-hidden="true"
+        ></i>
+        Novo tutor
+      </RouterLink>
     </div>
   </nav>
 </template>
