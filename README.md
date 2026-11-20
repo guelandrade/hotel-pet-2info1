@@ -1,9 +1,7 @@
-# Nome do projeto
+# PetSchool
 
-> Substitua este título e esta descrição pelas informações do seu projeto.
-
-Descreva brevemente o objetivo da aplicação, o problema que ela resolve e o
-público ao qual se destina.
+Aplicação web para cadastro e consulta de tutores e pets. O frontend em Vue.js
+consome uma API FastAPI, que persiste os dados em um banco MySQL.
 
 ## Tecnologias
 
@@ -12,7 +10,8 @@ público ao qual se destina.
 - Vue Router;
 - Bootstrap 5;
 - Bootstrap Icons;
-- Axios.
+- FastAPI;
+- MySQL.
 
 ## Pré-requisitos
 
@@ -20,6 +19,8 @@ Antes de iniciar, verifique se estão instalados:
 
 - [Node.js](https://nodejs.org/);
 - npm;
+- Python 3.10 ou superior;
+- MySQL Server;
 - [Git](https://git-scm.com/);
 - [Visual Studio Code](https://code.visualstudio.com/), recomendado.
 
@@ -47,16 +48,9 @@ nvm use 22.18.0
 
 ## Instalação
 
-Clone o repositório:
+Na raiz do projeto, instale as dependências do frontend:
 
 ```bash
-git clone URL-DO-REPOSITORIO
-```
-
-Acesse o diretório e instale as dependências:
-
-```bash
-cd nome-do-projeto
 npm install
 ```
 
@@ -74,6 +68,9 @@ O terminal apresentará o endereço local da aplicação, normalmente:
 http://localhost:5173
 ```
 
+Para configurar o MySQL e iniciar a API, siga as instruções em
+[backend/README.md](./backend/README.md).
+
 Outros comandos disponíveis:
 
 ```bash
@@ -88,14 +85,14 @@ npm run preview
 A aplicação organiza páginas, componentes, serviços, rotas e estilos por
 responsabilidade.
 
-Consulte o [guia de estrutura do projeto](./docs/estrutura-projeto.md).
-
 ## Documentação
 
-- [Como utilizar o template](./docs/como-utilizar-template.md);
-- [Estrutura do projeto](./docs/estrutura-projeto.md);
+- [Configuração do projeto](./docs/02-configuracao-projeto.md);
+- [Layout do PetSchool](./docs/03-layout-petschool.md);
+- [Criação das views](./docs/04-criar-views.md);
+- [Listagem de pets](./docs/05-ListarPets.md);
 - [Guia de padronização do código](./docs/guia-padronizacao-codigo.md);
-- [Validação do projeto](./docs/validacao-template.md).
+- [Testes da API e preparação do MySQL](./backend/README.md).
 
 ## API FastAPI da atividade
 
