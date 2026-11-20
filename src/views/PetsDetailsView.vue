@@ -1,66 +1,92 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { apiRequest } from '../services/api';
 
-const route = useRoute()
-const router = useRouter()
-const API_URL = 'http://localhost:3000'
-//exibir informações do pet e do tutor
-const pet = ref({})
-const tutor = ref({})
-const erroExclusao = ref('')
-const excluindo = ref(false)
+const route = useRoute();
+const router = useRouter();
+const pet = ref(null);
+const tutor = ref(null);
+const erro = ref('');
+const carregando = ref(true);
+const excluindo = ref(false);
 
-
-async function carregarPet(){
-  //exibindo os dados do Id do Pet
-  const idPet = route.params.id;
-  console.log('Id do pet:', idPet);
-
-  const respostePet = await fetch(`${API_URL}/pets/${idPet}`);
-
-  pet.value = await resposta.json();
-
-  const resportaTutor = await fetch(`${API_URL}/tutores/${pet.value.tutor.id}`);
-  tutor.value = await respostaTutor.json();
-}
-
-async function excluirPet(){
-  const idPet = route.params.id;
-  erroExclusao.value = ''
-  excluindo.value = true
-
+async function carregarPet() {
+  erro.value = '';
   try {
-    const resposta = await fetch(`${API_URL}/pets/${idPet}`, {
-      method: 'DELETE',
-    });
-    if (!resposta.ok) {
-      throw new Error('Não foi possível excluir o pet.')
-    }
-    await router.push({ name: 'pets' })
-  } catch {
-    erroExclusao.value = 'Não foi possível excluir o pet. Tente novamente.'
+    pet.value = await apiRequest(`/pets/${route.params.id}`);
+    tutor.value = await apiRequest(`/tutores/${pet.value.tutorId}`);
+  } catch (error) {
+    erro.value =
+      error instanceof Error ? error.message : 'Não foi possível carregar o pet.';
+  } finally {
+    carregando.value = false;
   }
 }
+
+async function excluirPet() {
+  if (!window.confirm('Deseja realmente excluir este pet?')) {
+    return;
+  }
+
+  erro.value = '';
+  excluindo.value = true;
+  try {
+    await apiRequest(`/pets/${route.params.id}`, { method: 'DELETE' });
+    await router.push({ name: 'pets' });
+  } catch (error) {
+    erro.value =
+      error instanceof Error ? error.message : 'Não foi possível excluir o pet.';
+  } finally {
+    excluindo.value = false;
+  }
+}
+
+onMounted(carregarPet);
 </script>
 
 <template>
-  <h1> Nome do pet: {{ pet.nome }}</h1>
-  <p> Espécie: {{ pet.especie }}</p>
-  <p> Nome do Tutor: {{ tutor.nome }}</p>
-  <p> Telefone: {{ tutor?.telefone }}</p>
+  <section>
+    <p v-if="carregando" role="status">Carregando detalhes do pet...</p>
+    <p v-else-if="erro && !pet" class="alert alert-danger" role="alert">
+      {{ erro }}
+    </p>
 
-  <button class="btn btn-default">
-    <RouterLink
-    :to="{name: 'pets'}">
-    Volta
-  </RouterLink>
-  </button>
+    <template v-else-if="pet">
+      <p v-if="erro" class="alert alert-danger" role="alert">{{ erro }}</p>
 
-  <button class="btn btn-primary" :disabled="excluindo" @click="excluirPet">
-    {{ excluindo ? 'Excluindo...' : 'Excluir' }}
-  </button>
+      <RouterLink
+        class="link-success fw-semibold text-decoration-none"
+        :to="{ name: 'pets' }"
+      >
+        Voltar para pets
+      </RouterLink>
 
+      <header class="mt-4 mb-4">
+        <h1 class="display-6 fw-bold mb-2">{{ pet.nome }}</h1>
+        <p class="text-body-secondary mb-0">Identificador: {{ pet.id }}</p>
+      </header>
 
+      <dl class="row g-4">
+        <div class="col-sm-6">
+          <dt class="text-body-secondary small mb-2">Espécie</dt>
+          <dd class="fs-5">{{ pet.especie }}</dd>
+        </div>
+        <div class="col-sm-6">
+          <dt class="text-body-secondary small mb-2">Tutor</dt>
+          <dd class="fs-5">{{ tutor?.nome ?? 'Tutor não encontrado' }}</dd>
+          <dd>{{ tutor?.telefone }}</dd>
+        </div>
+      </dl>
 
+      <button
+        class="btn btn-danger"
+        type="button"
+        :disabled="excluindo"
+        @click="excluirPet"
+      >
+        {{ excluindo ? 'Excluindo...' : 'Excluir pet' }}
+      </button>
+    </template>
+  </section>
 </template>

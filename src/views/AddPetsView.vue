@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
+import { apiRequest } from '../services/api';
 
 const novoPet = ref({
   nome: '',
@@ -9,29 +10,38 @@ const novoPet = ref({
 });
 
 const router = useRouter();
-
-// aqui estou declarando a API que vai retornar a listagem de todos os pets
-// será reponsavel por cadastrar novos pets
-
-const API_URL = 'http://localhost:3000';
-
-const tutores = ref({});
+const tutores = ref([]);
+const carregandoTutores = ref(true);
+const erro = ref('');
+const salvando = ref(false);
 
 async function carregarTutores() {
-  const resposta = await fetch(`${API_URL}/tutores`);
-  console.log('load tutores', tutores);
-  tutores.value = await resposta.json();
+  erro.value = '';
+  try {
+    tutores.value = await apiRequest('/tutores');
+  } catch (error) {
+    erro.value =
+      error instanceof Error ? error.message : 'Não foi possível carregar os tutores.';
+  } finally {
+    carregandoTutores.value = false;
+  }
 }
 
 async function salvarPet() {
-  await fetch(`${API_URL}/pets`, {
-    method: 'POST',
-    header: {
-      'Content-type': 'application/json',
-    },
-    body: JSON.stringify(novoPet.value),
-  });
-  router.push('/pets');
+  erro.value = '';
+  salvando.value = true;
+  try {
+    await apiRequest('/pets', {
+      method: 'POST',
+      body: JSON.stringify(novoPet.value),
+    });
+    await router.push('/pets');
+  } catch (error) {
+    erro.value =
+      error instanceof Error ? error.message : 'Não foi possível cadastrar o pet.';
+  } finally {
+    salvando.value = false;
+  }
 }
 
 onMounted(carregarTutores);
@@ -40,32 +50,24 @@ onMounted(carregarTutores);
 <template>
   <div>
     <header class="mb-4">
-      <h1 class="text-2xl font-bold">Listagem de Pets</h1>
+      <h1 class="text-2xl font-bold">Cadastrar Pet</h1>
       <p class="text-body-secondary mb-0">Cadastro de Pets no sistema.</p>
     </header>
 
     <RouterLink
-      class="btn btn-primary"
-      :to="{ name: 'addPet' }"
+      class="btn btn-outline-secondary mb-3"
+      :to="{ name: 'pets' }"
     >
-      Adicionar Pet
+      Voltar para pets
     </RouterLink>
 
-    <p v-if="carregandoTutores">Carregando Tutores ...</p>
-    <div v-else>
-      <p
-        v-if="erro"
-        class="alert alert-danger"
-        role="alert"
-      >
-        {{ erro }}
-      </p>
-    </div>
+    <p v-if="carregandoTutores" role="status">Carregando tutores...</p>
+    <p v-if="erro" class="alert alert-danger" role="alert">{{ erro }}</p>
 
-    <form @submit.prevent="salvarPet">
+    <form v-if="!carregandoTutores" @submit.prevent="salvarPet">
       <div class="col-md-6">
         <label
-          for="nome"
+          for="especie"
           class="form-label"
         >
           Nome do Pet
@@ -128,12 +130,16 @@ onMounted(carregarTutores);
           <option
             v-for="tutor in tutores"
             :key="tutor.id"
-            :value="tutor.id"
+            :value="Number(tutor.id)"
           >
             {{ tutor.nome }}
           </option>
         </select>
       </div>
+
+      <button class="btn btn-primary mt-3" type="submit" :disabled="salvando">
+        {{ salvando ? 'Salvando...' : 'Salvar Pet' }}
+      </button>
     </form>
   </div>
 </template>

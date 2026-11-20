@@ -97,6 +97,11 @@ Consulte o [guia de estrutura do projeto](./docs/estrutura-projeto.md).
 - [Guia de padronização do código](./docs/guia-padronizacao-codigo.md);
 - [Validação do projeto](./docs/validacao-template.md).
 
+## API FastAPI da atividade
+
+O backend solicitado na atividade, com acesso ao MySQL e instruções para o
+Workbench, está em [backend/README.md](./backend/README.md).
+
 ## Contribuição
 
 Para contribuir:

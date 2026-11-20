@@ -1,0 +1,25 @@
+CREATE DATABASE IF NOT EXISTS petschool
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+USE petschool;
+
+CREATE TABLE IF NOT EXISTS tutores (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(120) NOT NULL,
+    telefone VARCHAR(30) NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS pets (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(120) NOT NULL,
+    especie VARCHAR(60) NOT NULL,
+    tutor_id INT UNSIGNED NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_pets_tutores
+        FOREIGN KEY (tutor_id)
+        REFERENCES tutores (id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+) ENGINE=InnoDB;

@@ -1,41 +1,39 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import { apiRequest } from '../services/api';
 
-const API_URL = 'http://localhost:3000';
-
-const pets = ref([]);
 const tutores = ref([]);
 const loading = ref(true);
+const erro = ref('');
 
 async function carregarDados() {
-  const respostaPets = await fetch(`${API_URL}/pets`);
-  pets.value = await respostaPets.json();
-
-  console.log('Pets:', pets.value);
-
-  const respostaTutores = await fetch(`${API_URL}/tutores`);
-  tutores.value = await respostaTutores.json();
-
-  console.log('Tutores:', tutores.value);
-
-  loading.value = false;
-}
-
-
-async function excluirTutor(id) {
-  const confirmarExclusao = window.confirm('Deseja realmente excluir este item?')
-  if (confirmarExclusao) {
-    await fetch(`${API_URL}/tutores/${id}`, {
-      method: 'DELETE',
-    });
-    await carregarDados();
-    //Lógica para excluir o pet
-
+  erro.value = '';
+  loading.value = true;
+  try {
+    tutores.value = await apiRequest('/tutores');
+  } catch (error) {
+    erro.value =
+      error instanceof Error ? error.message : 'Não foi possível carregar os tutores.';
+  } finally {
+    loading.value = false;
   }
 }
 
-// Recebe o tutorId do pet e procura o tutor correspondente.
+async function excluirTutor(id) {
+  if (!window.confirm('Deseja realmente excluir este tutor?')) {
+    return;
+  }
+
+  try {
+    await apiRequest(`/tutores/${id}`, { method: 'DELETE' });
+    await carregarDados();
+  } catch (error) {
+    erro.value =
+      error instanceof Error ? error.message : 'Não foi possível excluir o tutor.';
+  }
+}
+
 onMounted(carregarDados);
 </script>
 
@@ -48,6 +46,9 @@ onMounted(carregarDados);
       </p>
     </header>
 
+    <p v-if="loading" role="status">Carregando tutores...</p>
+    <p v-if="erro" class="alert alert-danger" role="alert">{{ erro }}</p>
+
     <RouterLink
       class="btn btn-primary"
       :to="{ name: 'addTutor' }"
@@ -55,12 +56,13 @@ onMounted(carregarDados);
       Adicionar Tutor
     </RouterLink>
 
-    <table class="table table-striped table-hover">
+    <table v-if="!loading" class="table table-striped table-hover">
       <thead>
         <tr>
           <th>ID</th>
           <th>Nome</th>
           <th>Telefone</th>
+          <th>Ações</th>
         </tr>
       </thead>
 
@@ -74,7 +76,9 @@ onMounted(carregarDados);
           <td>{{ tutor.telefone }}</td>
           <td>
             <RouterLink :to="`/tutores/${tutor.id}`"> Visualizar </RouterLink>
-            <button class="btn btn-danger mr-5" @click="excluirTutor(tutor.id)" :to="`/tutores/${tutor.id}`"> Excluir </Button>
+            <button class="btn btn-danger mr-5" @click="excluirTutor(tutor.id)">
+              Excluir
+            </button>
           </td>
         </tr>
       </tbody>

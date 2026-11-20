@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { apiRequest } from '../services/api';
 
 const novoTutor = ref({
   nome: '',
@@ -8,22 +9,24 @@ const novoTutor = ref({
 });
 
 const router = useRouter();
-const API_URL = 'http://localhost:3000';
 const erro = ref('');
 const salvando = ref(false);
 
 async function salvarTutor() {
   erro.value = '';
   salvando.value = true;
-
-await fetch(`${API_URL}/tutores`, {
+  try {
+    await apiRequest('/tutores', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(novoTutor.value),
     });
-    router.push('/tutores')
+    await router.push('/tutores');
+  } catch (error) {
+    erro.value =
+      error instanceof Error ? error.message : 'Não foi possível cadastrar o tutor.';
+  } finally {
+    salvando.value = false;
+  }
 }
 </script>
 
@@ -34,9 +37,7 @@ await fetch(`${API_URL}/tutores`, {
       <p class="text-body-secondary mb-0">Cadastro de tutores no sistema.</p>
     </header>
 
-    <p v-if="erro" class="alert alert-danger" role="alert">
-      {{ erro }}
-    </p>
+    <p v-if="erro" class="alert alert-danger" role="alert">{{ erro }}</p>
 
     <form @submit.prevent="salvarTutor">
       <div class="col-md-6">
