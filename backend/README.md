@@ -115,7 +115,7 @@ npm run dev
 
 O frontend usa `http://127.0.0.1:8000` por padrão. Para outra URL, defina
 `VITE_API_URL` no ambiente antes de iniciar o Vite. As origens de
-desenvolvimento e preview (`localhost` e `127.0.0.1`, portas 5173 e 4173)
+desenvolvimento e preview (`localhost` e `127.0.0.1`, portas 5173, 5174 e 4173)
 estão autorizadas por CORS.
 
 ## Testes automatizados

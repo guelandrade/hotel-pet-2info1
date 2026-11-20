@@ -27,6 +27,21 @@ class PetSchoolApiTests(unittest.TestCase):
         )
         self.assertIn("POST", resposta.headers["access-control-allow-methods"])
 
+    def test_cors_permite_porta_alternativa_do_vite(self) -> None:
+        resposta = self.client.options(
+            "/pets",
+            headers={
+                "Origin": "http://localhost:5174",
+                "Access-Control-Request-Method": "GET",
+            },
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(
+            resposta.headers["access-control-allow-origin"],
+            "http://localhost:5174",
+        )
+
     @patch("main.executar_consulta")
     def test_lista_tutores(self, executar_consulta: unittest.mock.Mock) -> None:
         executar_consulta.return_value = [

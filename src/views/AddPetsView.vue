@@ -67,7 +67,7 @@ onMounted(carregarTutores);
     <form v-if="!carregandoTutores" @submit.prevent="salvarPet">
       <div class="col-md-6">
         <label
-          for="especie"
+          for="nome"
           class="form-label"
         >
           Nome do Pet
@@ -84,7 +84,7 @@ onMounted(carregarTutores);
 
       <div class="col-md-6">
         <label
-          for="nome"
+          for="especie"
           class="form-label"
         >
           Espécie
